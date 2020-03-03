@@ -59,7 +59,7 @@ namespace epi_utilities_countdown_timer
             _countdownTimer.HasStarted += (sender, args) =>
                 {
                     var timer = sender as SecondsCountdownTimer;
-                    Debug.Console(2, timer, "Countdown started and will expire at {0}", timer.FinishTime);
+                    Debug.Console(2, timer, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
                 };
 
             _countdownTimer.HasFinished += (sender, args) =>
