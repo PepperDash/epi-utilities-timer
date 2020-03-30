@@ -9,8 +9,8 @@ on:
 env:
   # solution path doesn't need slashes unless there it is multiple folders deep
   # solution name does not include extension. .sln is assumed
-  SOLUTION_PATH: PDT.LutronQuantum.EPI
-  SOLUTION_FILE: PDT.LutronQuantum.EPI
+  SOLUTION_PATH: epi-utilities-countdown_timer
+  SOLUTION_FILE: epi-utilities-countdown_timer
   # Do not edit this, we're just creating it here
   VERSION: 0.0.0-buildtype-buildnumber
   # Defaults to debug for build type
