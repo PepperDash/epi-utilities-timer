@@ -15,7 +15,18 @@ namespace epi_utilities_countdown_timer
     {
         private readonly SecondsCountdownTimer _countdownTimer;
 
-        private readonly int _secondsToCount;
+        public SecondsCountdownTimer Timer { get { return _countdownTimer; } }
+        public int SecondsToCount 
+        {
+            get { return _secondsToCount; }
+            set
+            {
+                _secondsToCount = value;
+                _countdownTimer.SecondsToCount = value;
+            }
+        }
+
+        private int _secondsToCount;
         private readonly int? _warningTime;
         private readonly int? _extendTime;
 
@@ -31,22 +42,18 @@ namespace epi_utilities_countdown_timer
         {
             DeviceFactory.AddFactoryForType("countdowntimer", config =>
                 {
-                    return new CountdownTimerEpi(config);
+                    var props = JsonConvert.DeserializeObject<CountdowmTimerPropsConfig>(config.Properties.ToString());
+                    var timer = new SecondsCountdownTimer(string.Format("{0}-timer", config.Key));
+                    timer.SecondsToCount = props.CountdownTime;
+
+                    return new CountdownTimerEpi(config.Key, timer, props);
                 });
         }
 
-        public CountdownTimerEpi(DeviceConfig config) 
-            : base(config.Key)
+        public CountdownTimerEpi(string key, SecondsCountdownTimer timer, CountdowmTimerPropsConfig props)
+            : base(key)
         {
-            var timerName = string.Format("{0}-timer", config.Key);
-            _countdownTimer = new SecondsCountdownTimer(timerName);
-
-            var props = JsonConvert.DeserializeObject<CountdowmTimerPropsConfig>(config.Properties.ToString());
-            _countdownTimer.SecondsToCount = props.CountdownTime;
-            _secondsToCount = props.CountdownTime;
-
-            if (_secondsToCount == 0) throw new Exception("The countdown timer must be > 0");
-
+            _countdownTimer = timer;
             _warningTime = props.WarningTime;
             _extendTime = props.ExtendTime;
 
@@ -56,6 +63,8 @@ namespace epi_utilities_countdown_timer
 
         public override bool CustomActivate()
         {
+            Debug.Console(2, _countdownTimer, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
+
             _countdownTimer.HasStarted += (sender, args) =>
                 {
                     var timer = sender as SecondsCountdownTimer;
@@ -64,34 +73,48 @@ namespace epi_utilities_countdown_timer
 
             _countdownTimer.HasFinished += (sender, args) =>
                 {
-                    TimerExpiredFb.Feedback.FireUpdate();
-                    _countdownTimer.SecondsToCount = _secondsToCount;
+                    var timer = sender as SecondsCountdownTimer;
+                    TimerExpiredFb.Start();
+
+                    Debug.Console(2, timer, "Countdown has completed");
+                    _countdownTimer.SecondsToCount = SecondsToCount;
                 };
 
             _countdownTimer.WasCancelled += (sender, args) =>
                 {
-                    _countdownTimer.SecondsToCount = _secondsToCount;
+                    var timer = sender as SecondsCountdownTimer;
+                    Debug.Console(2, timer, "Countdown cancelled");
+                    _countdownTimer.SecondsToCount = SecondsToCount;
                 };
 
             _countdownTimer.TimeRemainingFeedback.OutputChange += (sender, args) =>
                 {
-                    var timer = sender as SecondsCountdownTimer;
-                    var timeRemaining = Convert.ToInt32(_countdownTimer.TimeRemainingFeedback.ValueFunc.Invoke());
-                    Debug.Console(2, timer, "Time remaining:{0}", timeRemaining);
+                    var timer = sender as StringFeedback;
+                    var timeRemaining = Convert.ToInt32(args.StringValue);
+
+                    Debug.Console(2, this, "Time remaining:{0}", timeRemaining);
 
                     if (_warningTime == null) return;
                     if (timeRemaining == (int)_warningTime)
                     {
-                        TimerWarningFb.Feedback.FireUpdate();
+                        TimerWarningFb.Start();
                     }
                 };
 
+            _countdownTimer.PercentFeedback.OutputChange += (sender, args) =>
+            {
+                var timer = sender as Feedback;
+                var timeRemaining = args.IntValue;
+
+                if (_warningTime == null) return;
+                /*if (timeRemaining == (int)_warningTime)
+                {
+                    TimerWarningFb.Start();
+                }*/
+            };
+
             return base.CustomActivate();
         }
-
-        public Action TimerStart { get { return _countdownTimer.Start; } }
-        public Action TimerCancel { get { return _countdownTimer.Cancel; } }
-        public Action TimerFinish { get { return _countdownTimer.Finish; } }
 
         public void Extend()
         {
@@ -130,9 +153,27 @@ namespace epi_utilities_countdown_timer
             timer.TimerPercentageFb.LinkInputSig(trilist.UShortInput[joinMap.TimerPercentage]);
             timer.TimerValueFb.LinkInputSig(trilist.StringInput[joinMap.TimerValue]);
 
-            trilist.SetSigTrueAction(joinMap.TimerStart, timer.TimerStart);
-            trilist.SetSigTrueAction(joinMap.TimerCancel, timer.TimerCancel);
-            trilist.SetSigTrueAction(joinMap.TimerFinish, timer.TimerFinish);
+            trilist.SetSigTrueAction(joinMap.TimerStart, () =>
+                {
+                    if (timer.SecondsToCount == 0) return;
+                    timer.Timer.Start();
+                });
+
+            trilist.SetSigTrueAction(joinMap.TimerCancel, () =>
+                {
+                    timer.Timer.Cancel();
+                });
+
+            trilist.SetSigTrueAction(joinMap.TimerFinish, () =>
+                {
+                    timer.Timer.Finish();
+                });
+
+            trilist.SetUShortSigAction(joinMap.TimerCountdownSet, value =>
+                {
+                    timer.SecondsToCount = value;
+                });
+
             trilist.SetSigTrueAction(joinMap.TimerExtend, timer.Extend);
         }
     }
@@ -149,6 +190,7 @@ namespace epi_utilities_countdown_timer
         public uint TimerWarning { get; private set; }
 
         public uint TimerPercentage { get; private set; }
+        public uint TimerCountdownSet { get; private set; }
 
         public uint TimerValue { get; private set; }
 
@@ -163,6 +205,8 @@ namespace epi_utilities_countdown_timer
             TimerCounting = 1;
             TimerExpired = 2;
             TimerWarning = 3;
+
+            TimerCountdownSet = 1;
 
             TimerPercentage = 1;
 
