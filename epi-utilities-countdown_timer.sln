@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "epi-utilities-countdown_timer", "epi-utilities-countdown_timer\epi-utilities-countdown_timer.csproj", "{F57F94B3-2ACA-49DD-BF9D-CDAE7C31DFEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountdownTimerEpi", "src\countdown_timer\CountdownTimerEpi.csproj", "{F57F94B3-2ACA-49DD-BF9D-CDAE7C31DFEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AEA9D2AF-96C0-4066-987F-0572FD598D43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F57F94B3-2ACA-49DD-BF9D-CDAE7C31DFEF} = {AEA9D2AF-96C0-4066-987F-0572FD598D43}
 	EndGlobalSection
 EndGlobal
