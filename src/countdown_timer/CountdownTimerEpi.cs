@@ -53,6 +53,7 @@ namespace epi_utilities_countdown_timer
         public CountdownTimerEpi(string key, SecondsCountdownTimer timer, CountdowmTimerPropsConfig props)
             : base(key)
         {
+            _secondsToCount = props.CountdownTime;
             _countdownTimer = timer;
             _warningTime = props.WarningTime;
             _extendTime = props.ExtendTime;
@@ -155,7 +156,6 @@ namespace epi_utilities_countdown_timer
 
             trilist.SetSigTrueAction(joinMap.TimerStart, () =>
                 {
-                    if (timer.SecondsToCount == 0) return;
                     timer.Timer.Start();
                 });
 
