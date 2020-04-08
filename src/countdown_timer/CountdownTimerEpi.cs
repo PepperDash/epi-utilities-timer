@@ -60,6 +60,13 @@ namespace epi_utilities_countdown_timer
 
             TimerWarningFb = new BoolFeedbackPulse(500);
             TimerExpiredFb = new BoolFeedbackPulse(500);
+
+            CrestronEnvironment.ProgramStatusEventHandler += eventType =>
+                {
+                    if (eventType != eProgramStatusEventType.Stopping) return;
+
+                    _countdownTimer.Cancel();
+                };
         }
 
         public override bool CustomActivate()
