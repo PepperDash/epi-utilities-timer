@@ -97,12 +97,13 @@ namespace epi_utilities_countdown_timer
 
             _countdownTimer.TimeRemainingFeedback.OutputChange += (sender, args) =>
                 {
-                    var timer = sender as StringFeedback;
-                    var timeRemaining = Convert.ToInt32(args.StringValue);
+                    var timeRemaining = _countdownTimer.SecondsToCount;
 
-                    Debug.Console(2, this, "Time remaining:{0}", timeRemaining);
+                    Debug.Console(2, this, "Time remaining:{0}", args.StringValue);
 
-                    if (_warningTime == null) return;
+                    if (_warningTime == null) 
+                        return;
+
                     if (timeRemaining == (int)_warningTime)
                     {
                         TimerWarningFb.Start();
