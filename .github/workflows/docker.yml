@@ -9,9 +9,10 @@ on:
       - dev*
 
 env:
-  # solution path doesn't need slashes unless there it is multiple folders deep
+  # solution path needs slashes (use \). When solution file name and path are put together, it should be a valid path
+  # If Solution is in repo root, leave SOLUTION_PATH empty
   # solution name does not include extension. .sln is assumed
-  SOLUTION_PATH: src/
+  SOLUTION_PATH: \
   SOLUTION_FILE: epi-utilities-countdown_timer
   # Do not edit this, we're just creating it here
   VERSION: 0.0.0-buildtype-buildnumber
@@ -28,15 +29,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      # And any submodules
-      - name: Checkout submodules
-        shell: bash
-        run: |
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        # Fetch all tags
+          submodules: true
+          token: ${{ secrets.PLUGIN_ACTION_TOKEN }}
+      # Fetch all tags
       - name: Fetch tags
         run: git fetch --tags
       # Generate the appropriate version number
@@ -51,15 +46,22 @@ jobs:
         run: |
           Write-Output ${{ env.VERSION }}
           ./.github/scripts/UpdateAssemblyVersion.ps1 ${{ env.VERSION }}
+      # Login to Docker
+      - name: Login to Docker
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       # Build the solutions in the docker image
       - name: Build Solution
         shell: powershell
         run: |
-          Invoke-Expression "docker run --rm --mount type=bind,source=""$($Env:GITHUB_WORKSPACE)"",target=""c:/project"" pepperdash/sspbuilder c:\cihelpers\vsidebuild.exe -Solution ""c:\project\$($Env:SOLUTION_FILE).sln"" -BuildSolutionConfiguration $($ENV:BUILD_TYPE)"
+          Invoke-Expression "docker run --rm --mount type=bind,source=""$($Env:GITHUB_WORKSPACE)"",target=""c:/project"" pepperdash/sspbuilder c:\cihelpers\vsidebuild.exe -Solution ""c:\project\$($Env:SOLUTION_PATH)$($Env:SOLUTION_FILE).sln"" -BuildSolutionConfiguration $($ENV:BUILD_TYPE)"
       # Zip up the output files as needed
       - name: Zip Build Output
         shell: powershell
         run: ./.github/scripts/ZipBuildOutput.ps1
+      # Upload output files
       - name: Upload Build Output
         uses: actions/upload-artifact@v1
         with:

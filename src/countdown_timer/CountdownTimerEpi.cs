@@ -60,6 +60,13 @@ namespace epi_utilities_countdown_timer
 
             TimerWarningFb = new BoolFeedbackPulse(500);
             TimerExpiredFb = new BoolFeedbackPulse(500);
+
+            CrestronEnvironment.ProgramStatusEventHandler += eventType =>
+                {
+                    if (eventType != eProgramStatusEventType.Stopping) return;
+
+                    _countdownTimer.Cancel();
+                };
         }
 
         public override bool CustomActivate()
@@ -90,16 +97,15 @@ namespace epi_utilities_countdown_timer
 
             _countdownTimer.TimeRemainingFeedback.OutputChange += (sender, args) =>
                 {
-                    var timer = sender as StringFeedback;
-                    var timeRemaining = Convert.ToInt32(args.StringValue);
+                    if (_warningTime == null) 
+                        return;
 
-                    Debug.Console(2, this, "Time remaining:{0}", timeRemaining);
+                    var timeRemainingString = _countdownTimer.FinishTime.Subtract(DateTime.Now).ToString();
+                    double timeRemaining = _countdownTimer.FinishTime.Subtract(DateTime.Now).TotalSeconds;
+                    Debug.Console(2, this, "Checking Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
 
-                    if (_warningTime == null) return;
                     if (timeRemaining == (int)_warningTime)
-                    {
                         TimerWarningFb.Start();
-                    }
                 };
 
             _countdownTimer.PercentFeedback.OutputChange += (sender, args) =>
@@ -107,11 +113,8 @@ namespace epi_utilities_countdown_timer
                 var timer = sender as Feedback;
                 var timeRemaining = args.IntValue;
 
-                if (_warningTime == null) return;
-                /*if (timeRemaining == (int)_warningTime)
-                {
-                    TimerWarningFb.Start();
-                }*/
+                if (_warningTime == null) 
+                    return;
             };
 
             return base.CustomActivate();
@@ -119,8 +122,15 @@ namespace epi_utilities_countdown_timer
 
         public void Extend()
         {
-            if (_extendTime == null) return;
-            _countdownTimer.SecondsToCount = (int)_extendTime;
+            if (!_countdownTimer.IsRunningFeedback.BoolValue)
+                return;
+
+            int timeToExtend = _secondsToCount;
+            if (_extendTime != null)
+                timeToExtend = (int)_extendTime;
+
+            Debug.Console(2, _countdownTimer, "Countdown extended {0}", timeToExtend);
+            _countdownTimer.SecondsToCount = timeToExtend;
             _countdownTimer.Reset();
         }
 
