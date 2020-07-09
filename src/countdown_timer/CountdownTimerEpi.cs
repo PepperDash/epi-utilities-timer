@@ -46,7 +46,8 @@ namespace epi_utilities_countdown_timer
                     var timer = new SecondsCountdownTimer(string.Format("{0}-timer", config.Key));
                     timer.SecondsToCount = props.CountdownTime;
 
-                    return new CountdownTimerEpi(config.Key, timer, props);
+                    return 
+                        new CountdownTimerEpi(config.Key, timer, props);
                 });
         }
 
@@ -63,7 +64,8 @@ namespace epi_utilities_countdown_timer
 
             CrestronEnvironment.ProgramStatusEventHandler += eventType =>
                 {
-                    if (eventType != eProgramStatusEventType.Stopping) return;
+                    if (eventType != eProgramStatusEventType.Stopping) 
+                        return;
 
                     _countdownTimer.Cancel();
                 };
@@ -76,7 +78,7 @@ namespace epi_utilities_countdown_timer
             _countdownTimer.HasStarted += (sender, args) =>
                 {
                     var timer = sender as SecondsCountdownTimer;
-                    Debug.Console(2, timer, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
+                    Debug.Console(1, timer, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
                 };
 
             _countdownTimer.HasFinished += (sender, args) =>
@@ -84,14 +86,14 @@ namespace epi_utilities_countdown_timer
                     var timer = sender as SecondsCountdownTimer;
                     TimerExpiredFb.Start();
 
-                    Debug.Console(2, timer, "Countdown has completed");
+                    Debug.Console(1, timer, "Countdown has completed");
                     _countdownTimer.SecondsToCount = SecondsToCount;
                 };
 
             _countdownTimer.WasCancelled += (sender, args) =>
                 {
                     var timer = sender as SecondsCountdownTimer;
-                    Debug.Console(2, timer, "Countdown cancelled");
+                    Debug.Console(1, timer, "Countdown cancelled");
                     _countdownTimer.SecondsToCount = SecondsToCount;
                 };
 
@@ -102,7 +104,7 @@ namespace epi_utilities_countdown_timer
 
                     var timeRemainingString = _countdownTimer.FinishTime.Subtract(DateTime.Now).ToString();
                     double timeRemaining = _countdownTimer.FinishTime.Subtract(DateTime.Now).TotalSeconds;
-                    Debug.Console(2, this, "Checking Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
+                    Debug.Console(1, this, "Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
 
                     if (timeRemaining == (int)_warningTime)
                         TimerWarningFb.Start();
@@ -129,7 +131,7 @@ namespace epi_utilities_countdown_timer
             if (_extendTime != null)
                 timeToExtend = (int)_extendTime;
 
-            Debug.Console(2, _countdownTimer, "Countdown extended {0}", timeToExtend);
+            Debug.Console(1, _countdownTimer, "Countdown extended {0}", timeToExtend);
             _countdownTimer.SecondsToCount = timeToExtend;
             _countdownTimer.Reset();
         }
