@@ -1,15 +1,14 @@
 ![PepperDash Essentials Plugin](./images/essentials-plugin-blue.png)
 
-# PepperDash Countdown Timer Plugin
+# PepperDash Utilites Timer Plugin
 
 > This plugin is a Simpl Windows wrapper of the existing Essentials Countdown timer.
 
 ## Config Example
 
-```JSON
+```json
 {
     "key": "shutdown-timer",
-    "uid": 74,
     "name": "Shutdown Timer",
     "type": "countdowntimer",
     "group": "timers",
@@ -23,7 +22,7 @@
 
 **Time values must be entered in 'seconds'**
 
-# TimerJoinMap
+# Timer JoinMap
 
 ## Digitals
 
