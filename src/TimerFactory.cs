@@ -12,7 +12,7 @@ namespace CountdownTimerEpi
 		/// </summary>
 		public TimerFactory()
 		{
-			MinimumEssentialsFrameworkVersion = "1.15.4";
+			MinimumEssentialsFrameworkVersion = "1.10.3";
 			TypeNames = new List<string> {"countdownTimer"};
 		}
 
