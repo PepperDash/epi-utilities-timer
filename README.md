@@ -48,3 +48,10 @@
 | Join Number | Join Span | Description                         | Type   | Capabilities |
 | ----------- | --------- | ----------------------------------- | ------ | ------------ |
 | 401         | 1         | Timer countdown remaining time text | Serial | ToSIMPL      |
+
+
+
+
+
+
+
