@@ -107,6 +107,20 @@ namespace CountdownTimerEpi
 				JoinType = eJoinType.Digital
 			});
 
+        [JoinName("CountUpTimerStart")]
+        public JoinDataComplete CountUpTimerStart = new JoinDataComplete(
+            new JoinData
+            {
+                JoinNumber = 5,
+                JoinSpan = 1
+            },
+            new JoinMetadata
+            {
+                Description = "Timer countup start",
+                JoinCapabilities = eJoinCapabilities.FromSIMPL,
+                JoinType = eJoinType.Digital
+            });
+
 		#endregion
 
 
@@ -159,6 +173,20 @@ namespace CountdownTimerEpi
 				JoinCapabilities = eJoinCapabilities.ToSIMPL,
 				JoinType = eJoinType.Serial
 			});
+
+        [JoinName("CountUpTimerValue")]
+        public JoinDataComplete CountUpTimerValue = new JoinDataComplete(
+            new JoinData
+            {
+                JoinNumber = 5,
+                JoinSpan = 1
+            },
+            new JoinMetadata
+            {
+                Description = "Count Up Timer value",
+                JoinCapabilities = eJoinCapabilities.ToSIMPL,
+                JoinType = eJoinType.Serial
+            });
 
 		#endregion
 
