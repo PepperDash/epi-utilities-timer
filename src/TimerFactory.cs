@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using PepperDash.Core;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Config;
@@ -13,7 +14,7 @@ namespace CountdownTimerEpi
 		public TimerFactory()
 		{
 			MinimumEssentialsFrameworkVersion = "1.10.3";
-			TypeNames = new List<string> {"countdownTimer"};
+            TypeNames = new List<string> { "countdownTimer", "countupTimer" };
 		}
 
 		/// <summary>
