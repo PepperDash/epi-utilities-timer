@@ -12,12 +12,13 @@ namespace CountdownTimerEpi
 		private readonly SecondsCountdownTimer _countdownTimer;
 		private int _secondsToCount;
 		private readonly int? _warningTime;
-		private readonly int? _extendTime;
+		private readonly int? _extendTime;        
 
 		/// <summary>
-		/// Timer object
+		/// Timer objects
 		/// </summary>
 		public SecondsCountdownTimer Timer { get { return _countdownTimer; } }
+		public SecondsCountupTimer CountupTimer { get { return _countupTimer; } }
 
 		/// <summary>
 		/// Get/Set seconds to count
@@ -30,13 +31,13 @@ namespace CountdownTimerEpi
 				_secondsToCount = value;
 				_countdownTimer.SecondsToCount = value;
 			}
-		}
+		}		
 
 		public BoolFeedback TimerRunningFb { get { return _countdownTimer.IsRunningFeedback; } }
 		public BoolFeedbackPulse TimerExpiredFb { get; private set; }
 		public BoolFeedbackPulse TimerWarningFb { get; private set; }
 		public IntFeedback TimerPercentageFb { get { return _countdownTimer.PercentFeedback; } }
-		public StringFeedback TimerValueFb { get { return _countdownTimer.TimeRemainingFeedback; } }
+		public StringFeedback TimerValueFb { get { return _countdownTimer.TimeRemainingFeedback; } }		
 
 		/// <summary>
 		/// Constructor
@@ -188,4 +189,65 @@ namespace CountdownTimerEpi
 			_countdownTimer.Reset();
 		}
 	}
+
+    //Public class creating SecondsCountupTimer
+    public class SecondsCountupTimer : EssentialsBridgeableDevice
+    {
+        private readonly CTimer _countupTimer;
+        private int _secondsToCountUp;
+        public event EventHandler<EventArgs> CountUpHasStarted;
+        public BoolFeedback CountUpTimerRunningFb { get { return _countupTimer.IsRunningFeedback; } }
+        public StringFeedback CountUpTimerValueFb { get { return _countupTimer.TimeRemainingFeedback; } }
+
+        /// <summary>
+        /// Timer objects
+        /// </summary>
+        public SecondsCountupTimer CountupTimer { get { return _countupTimer; } }        
+
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="key"></param>
+        public SecondsCountupTimer(string key, string name) : base(key, name)
+        {
+            _countupTimer = new CTimer(CountUpTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
+
+            CrestronEnvironment.ProgramStatusEventHandler += eventType =>
+            {
+                if (eventType != eProgramStatusEventType.Stopping) return;
+
+                _countupTimer.Stop();
+            };
+        }
+
+        public void Start()
+        {
+            _countupTimer.Reset(_secondsToCountUp * 1000, _secondsToCountUp * 1000);
+        }
+
+        public void Stop()
+        {
+            _countupTimer.Stop();
+        }
+
+        public void Reset()
+        {
+            _countupTimer.Reset(_secondsToCountUp * 1000, _secondsToCountUp * 1000);
+        }
+
+        public void CountUpTimerCallback(object o)
+        {
+            _countupTimer.Stop();
+        }
+
+        public int SecondsToCountUp
+        {
+            get { return _secondsToCountUp; }
+            set
+            {
+                _secondsToCountUp = value;
+            }
+        }
+    }
 }
