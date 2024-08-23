@@ -18,7 +18,6 @@ namespace CountdownTimerEpi
 		/// Timer objects
 		/// </summary>
 		public SecondsCountdownTimer Timer { get { return _countdownTimer; } }
-		public SecondsCountupTimer CountupTimer { get { return _countupTimer; } }
 
 		/// <summary>
 		/// Get/Set seconds to count
@@ -154,7 +153,7 @@ namespace CountdownTimerEpi
 			Debug.Console(0, this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
 			Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
 
-			TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCountingg.JoinNumber]);
+			TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
 			TimerExpiredFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerExpired.JoinNumber]);
 			TimerWarningFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerWarning.JoinNumber]);
 
@@ -191,25 +190,25 @@ namespace CountdownTimerEpi
 	}
 
     //Public class creating SecondsCountupTimer
-    public class SecondsCountupTimer : EssentialsBridgeableDevice
+    public class CountupTimer : EssentialsBridgeableDevice
     {
         private readonly CTimer _countupTimer;
         private int _secondsToCountUp;
-        public event EventHandler<EventArgs> CountUpHasStarted;
-        public BoolFeedback CountUpTimerRunningFb { get { return _countupTimer.IsRunningFeedback; } }
-        public StringFeedback CountUpTimerValueFb { get { return _countupTimer.TimeRemainingFeedback; } }
+        //public event EventHandler<EventArgs> CountUpHasStarted;
+        //public BoolFeedback CountUpTimerRunningFb { get { return _countupTimer.IsRunningFeedback; } }
+        //public StringFeedback CountUpTimerValueFb { get { return _countupTimer.TimeRemainingFeedback; } }
 
         /// <summary>
         /// Timer objects
         /// </summary>
-        public SecondsCountupTimer CountupTimer { get { return _countupTimer; } }        
+        //public SecondsCountupTimer CountupTimer { get { return _countupTimer; } }        
 
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="key"></param>
-        public SecondsCountupTimer(string key, string name) : base(key, name)
+        public CountupTimer(string key, string name) : base(key, name)
         {
             _countupTimer = new CTimer(CountUpTimerCallback, null, Timeout.Infinite, Timeout.Infinite);
 
@@ -248,6 +247,39 @@ namespace CountdownTimerEpi
             {
                 _secondsToCountUp = value;
             }
+        }
+
+        /// <summary>
+        /// Links the plugin device to the EISC bridge
+        /// </summary>
+        /// <param name="trilist"></param>
+        /// <param name="joinStart"></param>
+        /// <param name="joinMapKey"></param>
+        /// <param name="bridge"></param>
+        public override void LinkToApi(BasicTriList trilist, uint joinStart, string joinMapKey, EiscApiAdvanced bridge)
+        {
+            var joinMap = new TimerJoinMap(joinStart);
+
+            // this adds the join map to the colleciton of the bridge
+            if (bridge != null)
+            {
+                bridge.AddJoinMap(Key, joinMap);
+            }
+
+            var customJoins = JoinMapHelper.TryGetJoinMapAdvancedForDevice(joinMapKey);
+            if (customJoins != null)
+            {
+                joinMap.SetCustomJoinData(customJoins);
+            }
+
+            Debug.Console(0, this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
+            Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
+
+            //TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCountingg.JoinNumber]);
+            //TimerValueFb.LinkInputSig(trilist.StringInput[joinMap.TimerValue.JoinNumber]);
+
+            trilist.SetSigTrueAction(joinMap.CountUpTimerStart.JoinNumber, () => Start());
+            trilist.SetSigFalseAction(joinMap.CountUpTimerStart.JoinNumber, () => Reset());
         }
     }
 }

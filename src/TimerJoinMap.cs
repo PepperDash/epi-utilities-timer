@@ -24,7 +24,7 @@ namespace CountdownTimerEpi
 			});
 
 		[JoinName("TimerCounting")]
-		public JoinDataComplete TimerCountingg = new JoinDataComplete(
+		public JoinDataComplete TimerCounting = new JoinDataComplete(
 			new JoinData
 			{
 				JoinNumber = 1,
