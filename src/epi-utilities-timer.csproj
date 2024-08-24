@@ -88,7 +88,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TimerDevice.cs" />
+    <Compile Include="TimerBaseFactory.cs" />
+    <Compile Include="TimerDeviceCountdown.cs" />
+    <Compile Include="TimerDeviceCountup.cs" />
     <Compile Include="TimerJoinMap.cs" />
     <Compile Include="TimerPropertiesConfig.cs" />
     <Compile Include="TimerFactory.cs" />

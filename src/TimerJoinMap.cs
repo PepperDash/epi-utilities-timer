@@ -1,11 +1,11 @@
 ﻿using PepperDash.Essentials.Core;
 
-namespace CountdownTimerEpi
+namespace TimerDevice
 {
 	/// <summary>
 	/// Plugin device bridge join map
 	/// </summary>
-	public class TimerJoinMap : JoinMapBaseAdvanced
+	public class CountdownTimerJoinMap : JoinMapBaseAdvanced
 	{
 		#region Digital
 
@@ -107,34 +107,6 @@ namespace CountdownTimerEpi
 				JoinType = eJoinType.Digital
 			});
 
-		[JoinName("CountUpTimerStart")]
-        public JoinDataComplete CountUpTimerStart = new JoinDataComplete(
-            new JoinData
-            {
-                JoinNumber = 5,
-                JoinSpan = 1
-            },
-            new JoinMetadata
-            {
-                Description = "Timer countup start",
-                JoinCapabilities = eJoinCapabilities.FromSIMPL,
-                JoinType = eJoinType.Digital
-            });
-
-		[JoinName("CountUpTimerCounting")]
-        public JoinDataComplete CountUpTimerCounting = new JoinDataComplete(
-            new JoinData
-            {
-                JoinNumber = 5,
-                JoinSpan = 1
-            },
-            new JoinMetadata
-            {
-                Description = "Timer countup counting",
-                JoinCapabilities = eJoinCapabilities.ToSIMPL,
-                JoinType = eJoinType.Digital
-            });	
-
 		#endregion
 
 
@@ -188,11 +160,65 @@ namespace CountdownTimerEpi
 				JoinType = eJoinType.Serial
 			});
 
+		#endregion
+
+
+		public CountdownTimerJoinMap(uint joinStart)
+			: base(joinStart, typeof (CountdownTimerJoinMap))
+		{			
+		}
+	}
+
+    /// <summary>
+    /// Plugin device bridge join map
+    /// </summary>
+    public class CountupTimerJoinMap : JoinMapBaseAdvanced
+    {
+        #region Digital
+
+        [JoinName("CountUpTimerStart")]
+        public JoinDataComplete CountUpTimerStart = new JoinDataComplete(
+            new JoinData
+            {
+                JoinNumber = 1,
+                JoinSpan = 1
+            },
+            new JoinMetadata
+            {
+                Description = "Timer countup start",
+                JoinCapabilities = eJoinCapabilities.FromSIMPL,
+                JoinType = eJoinType.Digital
+            });
+
+        [JoinName("CountUpTimerCounting")]
+        public JoinDataComplete CountUpTimerCounting = new JoinDataComplete(
+            new JoinData
+            {
+                JoinNumber = 1,
+                JoinSpan = 1
+            },
+            new JoinMetadata
+            {
+                Description = "Timer countup counting",
+                JoinCapabilities = eJoinCapabilities.ToSIMPL,
+                JoinType = eJoinType.Digital
+            });
+
+        #endregion
+
+
+        #region Analog
+
+        #endregion
+
+
+        #region Serial
+
         [JoinName("CountUpTimerValue")]
         public JoinDataComplete CountUpTimerValue = new JoinDataComplete(
             new JoinData
             {
-                JoinNumber = 5,
+                JoinNumber = 1,
                 JoinSpan = 1
             },
             new JoinMetadata
@@ -202,12 +228,12 @@ namespace CountdownTimerEpi
                 JoinType = eJoinType.Serial
             });
 
-		#endregion
+        #endregion
 
 
-		public TimerJoinMap(uint joinStart)
-			: base(joinStart, typeof (TimerJoinMap))
-		{			
-		}
-	}
+        public CountupTimerJoinMap(uint joinStart)
+            : base(joinStart, typeof(CountupTimerJoinMap))
+        {
+        }
+    }
 }
