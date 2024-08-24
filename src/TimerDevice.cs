@@ -191,13 +191,12 @@ namespace CountdownTimerEpi
 
     public class CountupTimer : EssentialsBridgeableDevice
     {
-        private readonly CTimer _countupTimer;
+        private CTimer _countupTimer;
 		private DateTime _countupStartTime;
 		private TimeSpan _countupTimerTime;
-        private int _secondsToCountUp;
-		public BoolFeedback CountUpTimerRunningFb { get { return _countupTimer.IsRunning; } }
-        //public StringFeedback CountUpTimerValueFb { get { return _countupTimer.TimeRemainingFeedback; } }
-		public event EventHandler<string> OnCountupTimerChange;
+        public BoolFeedback CountUpTimerRunningFb { get; private set; }
+        public StringFeedback CountUpTimerValueFb { get; private set; }
+        public event EventHandler<CountupTimerEventArgs> CountupTimerChanged;
 		public bool IsRunning { get; private set; }
 
         /// <summary>
@@ -206,7 +205,8 @@ namespace CountdownTimerEpi
         /// <param name="key"></param>
         public CountupTimer(string key, string name) : base(key, name)
         {            
-			CountUpTimerRunningFb = new BoolFeedback(() => _countupTimer.IsRunning);
+			CountUpTimerRunningFb = new BoolFeedback(() => this.IsRunning);
+			CountUpTimerValueFb = new StringFeedback(() => _countupTimerTime.ToString());
 
             CrestronEnvironment.ProgramStatusEventHandler += eventType =>
             {
@@ -216,6 +216,24 @@ namespace CountdownTimerEpi
             };
         }
 
+        /// <summary>
+        /// Update the method signature to use the custom EventArgs class:
+        /// </summary>
+        /// <param name="e"></param>
+		protected virtual void OnCountupTimerChange(CountupTimerEventArgs e)
+		{
+			CountupTimerChanged += (sender, args) => { };
+		}
+		
+		/// <summary>
+        /// Method to trigger custom event
+		/// </summary>
+		/// <param name="message"></param>
+		public void TriggerCountupTimerChange(string message)
+		{
+			OnCountupTimerChange(new CountupTimerEventArgs(message));
+		}
+
         public void Start()
         {
 			this._countupStartTime = DateTime.Now;
@@ -224,13 +242,13 @@ namespace CountdownTimerEpi
 			{				
 				Debug.Console(1, this, "Creating CountupTimer");				
 				_countupTimer = new CTimer(CallTimerIncrement, null, 1000, 1000);
-				_countdownTimer.IsRunning = TRUE;
+                this.IsRunning = true;
 			}
 			else
 			{
 				Debug.Console(1, this, "Resetting CountupTimer");				
 				_countupTimer.Reset(1000, 1000);
-				_countdownTimer.IsRunning = TRUE;
+				this.IsRunning = false;
 			}			
         }
 
@@ -238,21 +256,21 @@ namespace CountdownTimerEpi
         {
             if (this._countupStartTime != null)
 			{
-				TimeSpan minUsedTS = DateTime.Now - this.startTime;
-				var minUsed = minUsedTS.Minutes;
-				Debug.Console(1, this, "CountupTimer Stopped: minUsed = {0}", minUsed.ToString());
-
-				if (callTimer != null)
+                if (_countupTimer != null)
 				{
-					callTimer.Stop();
-					_countdownTimer.IsRunning = FALSE;
-				
+                    _countupTimer.Stop();
+					this.IsRunning = false;
 					var usageString = string.Format("{0}", DateTime.Now.ToString("HH:mm:ss"));
-					if (OnCountupTimerChange != null)
-						{ OnCountupTimerChange(this, usageString); }
-					
 
-					{ Debug.Console(1, this, "CountupTimer message: {0}\n", usageString); }
+                    if (CountupTimerChanged != null)
+                    { 
+                        TriggerCountupTimerChange(usageString);
+                        Debug.Console(1, this, "CountupTimer message: {0}\n", usageString);
+                    }
+                    else
+                    { 
+                        Debug.Console(1, this, "CountupTimerChanged Null\n"); 
+                    }
 				}
 				else
 				{ Debug.Console(1, this, "No countupTimer device found with start time"); }	
@@ -264,23 +282,16 @@ namespace CountdownTimerEpi
         public void Reset()
         {
             _countupTimer.Reset(1000, 1000);
-			_countdownTimer.IsRunning = TRUE;
+			this.IsRunning = true;
         }
 
         public void CallTimerIncrement(object notUsed)
         {
 			Debug.Console(1, this, "CountupTimer CTimer Increment");
             _countupTimerTime = _countupTimerTime.Add(TimeSpan.FromSeconds(1));
-			OnCountupTimerChange(this, string.Format("{0}", _countupTimerTime.ToString()));
-        }
-
-        public int SecondsToCountUp
-        {
-            get { return _secondsToCountUp; }
-            set
-            {
-                _secondsToCountUp = value;
-            }
+            // create a string variable of the _countupTimerTime
+			var message = string.Format("{0}", _countupTimerTime.ToString());
+            TriggerCountupTimerChange(message);
         }
 
         /// <summary>
@@ -310,10 +321,20 @@ namespace CountdownTimerEpi
             Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
 
             CountUpTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountUpTimerCounting.JoinNumber]);
-            //TimerValueFb.LinkInputSig(trilist.StringInput[joinMap.TimerValue.JoinNumber]);
+            CountUpTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountUpTimerValue.JoinNumber]);
 
             trilist.SetSigTrueAction(joinMap.CountUpTimerStart.JoinNumber, () => Start());
             trilist.SetSigFalseAction(joinMap.CountUpTimerStart.JoinNumber, () => Stop());
+        }
+    }
+
+	public class CountupTimerEventArgs : EventArgs
+    {
+        public string Message { get; set; }
+
+        public CountupTimerEventArgs(string message)
+        {
+            Message = message;
         }
     }
 }
