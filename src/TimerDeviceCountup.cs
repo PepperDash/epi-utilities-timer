@@ -12,8 +12,9 @@ namespace TimerDevice
         private CTimer _countupTimer;
         private DateTime _countupStartTime;
         private TimeSpan _countupTimerTime;
-        public BoolFeedback CountUpTimerRunningFb { get; private set; }
-        public StringFeedback CountUpTimerValueFb { get; private set; }
+        public bool _autoStopOnStartRelease;
+        public BoolFeedback CountupTimerRunningFb { get; private set; }
+        public StringFeedback CountupTimerValueFb { get; private set; }
         public event EventHandler<CountupTimerEventArgs> CountupTimerChanged;
         public bool IsRunning { get; private set; }
 
@@ -26,14 +27,17 @@ namespace TimerDevice
         {
             if (propertiesConfig == null) return;
 
-            CountUpTimerRunningFb = new BoolFeedback(() => this.IsRunning);
-            CountUpTimerValueFb = new StringFeedback(() => _countupTimerTime.ToString());
+            _autoStopOnStartRelease = propertiesConfig.autoStopOnStartRelease;
+            CountupTimerRunningFb = new BoolFeedback(() => this.IsRunning);
+            CountupTimerValueFb = new StringFeedback(() => _countupTimerTime.ToString());
 
             CrestronEnvironment.ProgramStatusEventHandler += eventType =>
             {
-                if (eventType != eProgramStatusEventType.Stopping) return;
-
-                _countupTimer.Stop();
+                if (eventType != eProgramStatusEventType.Stopping)
+                {
+                    this.Stop();
+                    _countupTimer = null;
+                }
             };
         }
 
@@ -58,8 +62,13 @@ namespace TimerDevice
         public void Start()
         {
             Debug.Console(1, this, "CountupTimer.Start() requested...");
+            if(_countupStartTime == null)
+                _countupStartTime = new DateTime();
+
             this._countupStartTime = DateTime.Now;
-            _countupTimerTime = new TimeSpan();
+            if(_countupTimerTime == null)
+                _countupTimerTime = new TimeSpan();
+
             if (_countupTimer == null)
             {
                 Debug.Console(1, this, "Creating CountupTimer");
@@ -70,9 +79,16 @@ namespace TimerDevice
             {
                 Debug.Console(1, this, "Resetting CountupTimer");
                 _countupTimer.Reset(1000, 1000);
-                this.IsRunning = false;
+                this.IsRunning = true;
             }
         }
+
+        public void AutoStop()
+        {
+            if(_autoStopOnStartRelease)
+                this.Stop();
+        }
+
 
         public void Stop()
         {
@@ -88,7 +104,7 @@ namespace TimerDevice
                     if (CountupTimerChanged != null)
                     {
                         TriggerCountupTimerChange(usageString);
-                        Debug.Console(1, this, "CountupTimer message: {0}\n", usageString);
+                        Debug.Console(1, this, "CountupTimer stopped at: {0}\n", usageString);
                     }
                     else
                     {
@@ -112,9 +128,8 @@ namespace TimerDevice
         {
             Debug.Console(1, this, "CountupTimer CTimer Increment");
             _countupTimerTime = _countupTimerTime.Add(TimeSpan.FromSeconds(1));
-            // create a string variable of the _countupTimerTime
-            var message = string.Format("{0}", _countupTimerTime.ToString());
-            TriggerCountupTimerChange(message);
+            string elapsedTime = (string.Format("{0:00}:{1:00}:{2:00}", _countupTimerTime.TotalHours, _countupTimerTime.Minutes, _countupTimerTime.Seconds));
+            TriggerCountupTimerChange(elapsedTime);
         }
 
         /// <summary>
@@ -143,11 +158,11 @@ namespace TimerDevice
             Debug.Console(0, this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
             Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
 
-            CountUpTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountUpTimerCounting.JoinNumber]);
-            CountUpTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountUpTimerValue.JoinNumber]);
+            CountupTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountupTimerCounting.JoinNumber]);
+            CountupTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountupTimerValue.JoinNumber]);
 
-            trilist.SetSigTrueAction(joinMap.CountUpTimerStart.JoinNumber, () => Start());
-            trilist.SetSigFalseAction(joinMap.CountUpTimerStart.JoinNumber, () => Stop());
+            trilist.SetSigTrueAction(joinMap.CountupTimerStart.JoinNumber, () => Start());
+            trilist.SetSigTrueAction(joinMap.CountupTimerStop.JoinNumber, () => Stop());
         }
     }
 

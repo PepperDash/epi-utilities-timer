@@ -693,6 +693,8 @@ SmH=9
 RelStat=Release
 ProdLine=3-Series
 DbH=2
+CsH=1
+EtH=1
 ]
 [
 ObjTp=Db
@@ -712,6 +714,11 @@ DvH=510
 Whc=3
 Mnf=Crestron
 Mdl=3 Series TCP/IP Ethernet Intersystem Communications
+]
+[
+ObjTp=Cs
+H=1
+DvH=510
 ]
 [
 ObjTp=FP
@@ -736,6 +743,13 @@ SH=9
 Z=100
 Ht=4
 Hi=38
+]
+[
+ObjTp=Et
+H=1
+DvH=510
+IPM=255.255.255.0
+IPA=127.0.0.2
 ]
 [
 ObjTp=Sm

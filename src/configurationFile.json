@@ -21,14 +21,12 @@
         "uid": 0
       },
       {
-        "key": "countdown-timer",
+        "key": "countup-timer",
         "uid": 26,
-        "type": "countdowntimer",
+        "type": "countuptimer",
         "group": "timers",
-        "properties": {
-          "countdownTime": 300,
-          "warningTime": 10,
-          "extendTime": 5
+        "properties": { 
+          "autoStopOnStartRelease": true
         }
       },
       {
@@ -46,7 +44,8 @@
             "method": "ipidTcp"
           },
           "devices": [
-            { "deviceKey": "countdown-timer"          , "joinStart": 1  }
+            
+            { "deviceKey": "countup-timer"          , "joinStart": 1  }
           ]
         }
       }

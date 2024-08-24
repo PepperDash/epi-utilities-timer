@@ -22,6 +22,7 @@ namespace TimerDevice
     /// </summary>
     public class CountupTimerPropertiesConfig
     {
-        
+        [JsonProperty("autoStopOnStartRelease")]
+        public bool autoStopOnStartRelease { get; set; }
     }
 }

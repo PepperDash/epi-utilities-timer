@@ -176,8 +176,8 @@ namespace TimerDevice
     {
         #region Digital
 
-        [JoinName("CountUpTimerStart")]
-        public JoinDataComplete CountUpTimerStart = new JoinDataComplete(
+        [JoinName("CountupTimerStart")]
+        public JoinDataComplete CountupTimerStart = new JoinDataComplete(
             new JoinData
             {
                 JoinNumber = 1,
@@ -190,8 +190,8 @@ namespace TimerDevice
                 JoinType = eJoinType.Digital
             });
 
-        [JoinName("CountUpTimerCounting")]
-        public JoinDataComplete CountUpTimerCounting = new JoinDataComplete(
+        [JoinName("CountupTimerCounting")]
+        public JoinDataComplete CountupTimerCounting = new JoinDataComplete(
             new JoinData
             {
                 JoinNumber = 1,
@@ -201,6 +201,20 @@ namespace TimerDevice
             {
                 Description = "Timer countup counting",
                 JoinCapabilities = eJoinCapabilities.ToSIMPL,
+                JoinType = eJoinType.Digital
+            });
+
+        [JoinName("CountupTimerStop")]
+        public JoinDataComplete CountupTimerStop = new JoinDataComplete(
+            new JoinData
+            {
+                JoinNumber = 2,
+                JoinSpan = 1
+            },
+            new JoinMetadata
+            {
+                Description = "Stop timer",
+                JoinCapabilities = eJoinCapabilities.FromSIMPL,
                 JoinType = eJoinType.Digital
             });
 
@@ -214,8 +228,8 @@ namespace TimerDevice
 
         #region Serial
 
-        [JoinName("CountUpTimerValue")]
-        public JoinDataComplete CountUpTimerValue = new JoinDataComplete(
+        [JoinName("CountupTimerValue")]
+        public JoinDataComplete CountupTimerValue = new JoinDataComplete(
             new JoinData
             {
                 JoinNumber = 1,
