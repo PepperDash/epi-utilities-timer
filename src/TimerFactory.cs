@@ -28,8 +28,8 @@ namespace CountdownTimerEpi
 
 			// get the plugin device properties configuration object & check for null 
 			var propertiesConfig = dc.Properties.ToObject<TimerPropertiesConfig>();
-			if (propertiesConfig != null) return new TimerDevice(dc.Key, dc.Name, propertiesConfig);
-            if (propertiesConfig != null) return new CountupTimer(dc.Key, dc.Name);
+            if (propertiesConfig != null) new CountupTimer(dc.Key, dc.Name, propertiesConfig);
+            if (propertiesConfig != null) return new TimerDevice(dc.Key, dc.Name, propertiesConfig);
 			
 			Debug.Console(0, "[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
 			return null;

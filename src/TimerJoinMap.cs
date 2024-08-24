@@ -107,7 +107,7 @@ namespace CountdownTimerEpi
 				JoinType = eJoinType.Digital
 			});
 
-		[JoinName("CountUpTimerStarted")]
+		[JoinName("CountUpTimerStart")]
         public JoinDataComplete CountUpTimerStart = new JoinDataComplete(
             new JoinData
             {

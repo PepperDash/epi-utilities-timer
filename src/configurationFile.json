@@ -1,0 +1,58 @@
+{
+  "system": {
+    "info": {}
+  },
+  "template": {
+    "devices": [
+      {
+        "type": "rmc4",
+        "name": "processor",
+        "group": "processor",
+        "supportedConfigModes": ["compliance", "essentials"],
+        "supportedSystemTypes": ["hudType", "presType", "vtcType", "custom"],
+        "supportsCompliance": true,
+        "properties": {
+          "numberOfComPorts": 6,
+          "numberOfIrPorts": 8,
+          "numberOfRelays": 8,
+          "numberOfDIOPorts": 8
+        },
+        "key": "processor",
+        "uid": 0
+      },
+      {
+        "key": "countdown-timer",
+        "uid": 26,
+        "type": "countdowntimer",
+        "group": "timers",
+        "properties": {
+          "countdownTime": 300,
+          "warningTime": 10,
+          "extendTime": 5
+        }
+      },
+      {
+        "key": "timers-bridge",
+        "uid": 26,
+        "group": "api",
+        "type": "eiscApiAdvanced",
+        "properties": {
+          "control": {
+            "tcpSshProperties": {
+              "address": "127.0.0.2",
+              "port": 0
+            },
+            "ipid": "a4",
+            "method": "ipidTcp"
+          },
+          "devices": [
+            { "deviceKey": "countdown-timer"          , "joinStart": 1  }
+          ]
+        }
+      }
+    ],
+    "info": {},
+    "rooms": [],
+    "tieLines": []
+  }
+}

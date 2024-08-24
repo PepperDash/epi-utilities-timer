@@ -203,8 +203,11 @@ namespace CountdownTimerEpi
         /// Constructor
         /// </summary>
         /// <param name="key"></param>
-        public CountupTimer(string key, string name) : base(key, name)
-        {            
+        public CountupTimer(string key, string name, TimerPropertiesConfig propertiesConfig)
+		 : base(key, name)
+        {    
+			if (propertiesConfig == null) return;
+
 			CountUpTimerRunningFb = new BoolFeedback(() => this.IsRunning);
 			CountUpTimerValueFb = new StringFeedback(() => _countupTimerTime.ToString());
 
@@ -236,6 +239,7 @@ namespace CountdownTimerEpi
 
         public void Start()
         {
+            Debug.Console(1, this, "CountupTimer.Start() requested...");
 			this._countupStartTime = DateTime.Now;
 			_countupTimerTime = new TimeSpan();
 			if(_countupTimer == null)
@@ -254,6 +258,7 @@ namespace CountdownTimerEpi
 
         public void Stop()
         {
+            Debug.Console(1, this, "CountupTimer.Stop() requested...");
             if (this._countupStartTime != null)
 			{
                 if (_countupTimer != null)
@@ -273,10 +278,10 @@ namespace CountdownTimerEpi
                     }
 				}
 				else
-				{ Debug.Console(1, this, "No countupTimer device found with start time"); }	
+				{ Debug.Console(1, this, "countupTimer null"); }	
 			}
 			else
-			{ Debug.Console(1, this, "No countupTimer device found with start time"); }
+			{ Debug.Console(1, this, "CountupStartTime null."); }
         }
 
         public void Reset()
@@ -305,7 +310,7 @@ namespace CountdownTimerEpi
         {
             var joinMap = new TimerJoinMap(joinStart);
 
-            // this adds the join map to the colleciton of the bridge
+            // this adds the join map to the collection of the bridge
             if (bridge != null)
             {
                 bridge.AddJoinMap(Key, joinMap);
