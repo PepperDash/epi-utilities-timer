@@ -103,9 +103,10 @@ namespace TimerDevice
                 _countupCTimer.Stop();
                 IsRunning = false;
                 CountupTimerRunningFb.FireUpdate();
+                _countupTimerTimeSpan = new TimeSpan();
+                _totalElapsedSecondsTimeSpan = new TimeSpan();
                 _countupTimeSecondsElapsedInt = 0;
                 _countupCTimer = null;
-                _totalElapsedSecondsTimeSpan = TimeSpan.FromSeconds(0);
             }
             else
             { Debug.Console(1, this, "Stop() called while _countupCTimer null."); }
