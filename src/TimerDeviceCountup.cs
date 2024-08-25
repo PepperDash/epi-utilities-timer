@@ -9,10 +9,10 @@ namespace TimerDevice
 {
     public class CountupTimer : EssentialsBridgeableDevice
     {
-        private CTimer _countupTimer;
-        private DateTime _countupStartTime;
-        private TimeSpan _countupTimerTime;
-        public bool _autoStopOnStartRelease;
+        private CTimer _countupCTimer;
+        private TimeSpan _countupTimerTimeSpan, _totalElapsedSecondsTimeSpan;
+        private int _countupTimeSecondsElapsedInt;
+        public bool _autoStopOnStartReleaseBool;
         public BoolFeedback CountupTimerRunningFb { get; private set; }
         public StringFeedback CountupTimerValueFb { get; private set; }
         public event EventHandler<CountupTimerEventArgs> CountupTimerChanged;
@@ -27,16 +27,16 @@ namespace TimerDevice
         {
             if (propertiesConfig == null) return;
 
-            _autoStopOnStartRelease = propertiesConfig.autoStopOnStartRelease;
+            _autoStopOnStartReleaseBool = propertiesConfig.autoStopOnStartRelease;
             CountupTimerRunningFb = new BoolFeedback(() => this.IsRunning);
-            CountupTimerValueFb = new StringFeedback(() => _countupTimerTime.ToString());
+            CountupTimerValueFb = new StringFeedback(() => _countupTimerTimeSpan.ToString());
 
             CrestronEnvironment.ProgramStatusEventHandler += eventType =>
             {
                 if (eventType != eProgramStatusEventType.Stopping)
                 {
                     this.Stop();
-                    _countupTimer = null;
+                    _countupCTimer = null;
                 }
             };
         }
@@ -61,31 +61,35 @@ namespace TimerDevice
 
         public void Start()
         {
+            if (IsRunning) return;
+            IsRunning = true;
+            CountupTimerRunningFb.FireUpdate();
+
             Debug.Console(1, this, "CountupTimer.Start() requested...");
-            if(_countupStartTime == null)
-                _countupStartTime = new DateTime();
 
-            this._countupStartTime = DateTime.Now;
-            if(_countupTimerTime == null)
-                _countupTimerTime = new TimeSpan();
+            if(_countupTimerTimeSpan == null)
+                _countupTimerTimeSpan = new TimeSpan();
 
-            if (_countupTimer == null)
+            if (_totalElapsedSecondsTimeSpan == null)
+                _totalElapsedSecondsTimeSpan = new TimeSpan();
+
+            if (_countupCTimer == null)
             {
                 Debug.Console(1, this, "Creating CountupTimer");
-                _countupTimer = new CTimer(CallTimerIncrement, null, 1000, 1000);
-                this.IsRunning = true;
+                _countupCTimer = new CTimer(CallTimerIncrement, null, 1000, 1000);
+                _countupTimeSecondsElapsedInt = 0;
+                
             }
             else
             {
                 Debug.Console(1, this, "Resetting CountupTimer");
-                _countupTimer.Reset(1000, 1000);
-                this.IsRunning = true;
+                _countupCTimer.Reset(1000, 1000);
             }
         }
 
         public void AutoStop()
         {
-            if(_autoStopOnStartRelease)
+            if(_autoStopOnStartReleaseBool)
                 this.Stop();
         }
 
@@ -93,43 +97,42 @@ namespace TimerDevice
         public void Stop()
         {
             Debug.Console(1, this, "CountupTimer.Stop() requested...");
-            if (this._countupStartTime != null)
-            {
-                if (_countupTimer != null)
-                {
-                    _countupTimer.Stop();
-                    this.IsRunning = false;
-                    var usageString = string.Format("{0}", DateTime.Now.ToString("HH:mm:ss"));
 
-                    if (CountupTimerChanged != null)
-                    {
-                        TriggerCountupTimerChange(usageString);
-                        Debug.Console(1, this, "CountupTimer stopped at: {0}\n", usageString);
-                    }
-                    else
-                    {
-                        Debug.Console(1, this, "CountupTimerChanged Null\n");
-                    }
-                }
-                else
-                { Debug.Console(1, this, "countupTimer null"); }
+            if (_countupCTimer != null)
+            {
+                _countupCTimer.Stop();
+                IsRunning = false;
+                CountupTimerRunningFb.FireUpdate();
+                _countupTimeSecondsElapsedInt = 0;
+                _countupCTimer = null;
+                _totalElapsedSecondsTimeSpan = TimeSpan.FromSeconds(0);
             }
             else
-            { Debug.Console(1, this, "CountupStartTime null."); }
+            { Debug.Console(1, this, "Stop() called while _countupCTimer null."); }
         }
 
         public void Reset()
         {
-            _countupTimer.Reset(1000, 1000);
+            _countupCTimer.Reset(1000, 1000);
+            _countupTimeSecondsElapsedInt = 0;
             this.IsRunning = true;
         }
 
         public void CallTimerIncrement(object notUsed)
         {
             Debug.Console(1, this, "CountupTimer CTimer Increment");
-            _countupTimerTime = _countupTimerTime.Add(TimeSpan.FromSeconds(1));
-            string elapsedTime = (string.Format("{0:00}:{1:00}:{2:00}", _countupTimerTime.TotalHours, _countupTimerTime.Minutes, _countupTimerTime.Seconds));
-            TriggerCountupTimerChange(elapsedTime);
+            _countupTimerTimeSpan = _countupTimerTimeSpan.Add(TimeSpan.FromSeconds(1));
+            _countupTimeSecondsElapsedInt++;
+            var elapsedTime = GetElapsedTime();
+            Debug.Console(1, this, "CountupTimer elapsed time: {0}", elapsedTime.ToString());
+            TriggerCountupTimerChange(elapsedTime.ToString());
+            CountupTimerValueFb.FireUpdate();
+        }
+
+        private string GetElapsedTime()
+        {
+            _totalElapsedSecondsTimeSpan = TimeSpan.FromSeconds(_countupTimeSecondsElapsedInt);
+            return string.Format("{0:00}:{1:00}:{2:00}", (int)_totalElapsedSecondsTimeSpan.TotalHours, _totalElapsedSecondsTimeSpan.Minutes, _totalElapsedSecondsTimeSpan.Seconds);
         }
 
         /// <summary>
