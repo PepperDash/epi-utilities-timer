@@ -10,9 +10,8 @@ namespace TimerDevice
     public class CountupTimer : EssentialsBridgeableDevice
     {
         private CTimer _countupCTimer;
-        private TimeSpan _countupTimerTimeSpan, _totalElapsedSecondsTimeSpan;
-        private int _countupTimeSecondsElapsedInt;
-        public bool _autoStopOnStartReleaseBool;
+        private TimeSpan _countupTimerTimeSpan;
+        private bool _autoStopOnStartReleaseBool;
         public BoolFeedback CountupTimerRunningFb { get; private set; }
         public StringFeedback CountupTimerValueFb { get; private set; }
         public event EventHandler<CountupTimerEventArgs> CountupTimerChanged;
@@ -58,7 +57,10 @@ namespace TimerDevice
         {
             OnCountupTimerChange(new CountupTimerEventArgs(message));
         }
-
+        
+        /// <summary>
+        /// Start countupTimer
+        /// </summary>
         public void Start()
         {
             if (IsRunning) return;
@@ -70,15 +72,10 @@ namespace TimerDevice
             if(_countupTimerTimeSpan == null)
                 _countupTimerTimeSpan = new TimeSpan();
 
-            if (_totalElapsedSecondsTimeSpan == null)
-                _totalElapsedSecondsTimeSpan = new TimeSpan();
-
             if (_countupCTimer == null)
             {
                 Debug.Console(1, this, "Creating CountupTimer");
                 _countupCTimer = new CTimer(CallTimerIncrement, null, 1000, 1000);
-                _countupTimeSecondsElapsedInt = 0;
-                
             }
             else
             {
@@ -87,13 +84,9 @@ namespace TimerDevice
             }
         }
 
-        public void AutoStop()
-        {
-            if(_autoStopOnStartReleaseBool)
-                this.Stop();
-        }
-
-
+        /// <summary>
+        /// Stop countupTimer
+        /// </summary>
         public void Stop()
         {
             Debug.Console(1, this, "CountupTimer.Stop() requested...");
@@ -104,36 +97,57 @@ namespace TimerDevice
                 IsRunning = false;
                 CountupTimerRunningFb.FireUpdate();
                 _countupTimerTimeSpan = new TimeSpan();
-                _totalElapsedSecondsTimeSpan = new TimeSpan();
-                _countupTimeSecondsElapsedInt = 0;
                 _countupCTimer = null;
             }
             else
             { Debug.Console(1, this, "Stop() called while _countupCTimer null."); }
         }
 
+        /// <summary>
+        /// Restart the existing timer where it left off
+        /// </summary>
         public void Reset()
         {
             _countupCTimer.Reset(1000, 1000);
-            _countupTimeSecondsElapsedInt = 0;
             this.IsRunning = true;
         }
 
+        /// <summary>
+        /// Callback method for countupTimer
+        /// </summary>
+        /// <param name="notUsed">Not used</param>
         public void CallTimerIncrement(object notUsed)
         {
-            Debug.Console(1, this, "CountupTimer CTimer Increment");
             _countupTimerTimeSpan = _countupTimerTimeSpan.Add(TimeSpan.FromSeconds(1));
-            _countupTimeSecondsElapsedInt++;
             var elapsedTime = GetElapsedTime();
-            Debug.Console(1, this, "CountupTimer elapsed time: {0}", elapsedTime.ToString());
             TriggerCountupTimerChange(elapsedTime.ToString());
             CountupTimerValueFb.FireUpdate();
         }
 
+        /// <summary>
+        /// Method that returns the countupTimer in a specific format
+        /// </summary>
+        /// <returns>String in HH:mm:ss format</returns>
         private string GetElapsedTime()
         {
-            _totalElapsedSecondsTimeSpan = TimeSpan.FromSeconds(_countupTimeSecondsElapsedInt);
-            return string.Format("{0:00}:{1:00}:{2:00}", (int)_totalElapsedSecondsTimeSpan.TotalHours, _totalElapsedSecondsTimeSpan.Minutes, _totalElapsedSecondsTimeSpan.Seconds);
+            return string.Format("{0:00}:{1:00}:{2:00}", (int)_countupTimerTimeSpan.TotalHours, _countupTimerTimeSpan.Minutes, _countupTimerTimeSpan.Seconds);
+        }
+
+        /// <summary>
+        /// Method to trigger Start or Stop countupTimer
+        /// </summary>
+        /// <param name="state">Pass</param>
+        private void StartStopCountupTimer(bool state)
+        {
+            if (state)
+            { 
+                Start();
+            }
+            else if (!state)
+            {
+                if (_autoStopOnStartReleaseBool)
+                    this.Stop();
+            }
         }
 
         /// <summary>
@@ -165,7 +179,7 @@ namespace TimerDevice
             CountupTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountupTimerCounting.JoinNumber]);
             CountupTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountupTimerValue.JoinNumber]);
 
-            trilist.SetSigTrueAction(joinMap.CountupTimerStart.JoinNumber, () => Start());
+            trilist.SetBoolSigAction(joinMap.CountupTimerStart.JoinNumber, StartStopCountupTimer);
             trilist.SetSigTrueAction(joinMap.CountupTimerStop.JoinNumber, () => Stop());
         }
     }

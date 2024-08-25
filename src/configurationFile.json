@@ -21,6 +21,17 @@
         "uid": 0
       },
       {
+        "key": "countdown-timer",
+        "uid": 26,
+        "type": "countdowntimer",
+        "group": "timers",
+        "properties": { 
+          "CountdownTime": 15,
+          "WarningTime": 5,
+          "ExtendTime": 5
+        }
+      },
+      {
         "key": "countup-timer",
         "uid": 26,
         "type": "countuptimer",
@@ -45,7 +56,8 @@
           },
           "devices": [
             
-            { "deviceKey": "countup-timer"          , "joinStart": 1  }
+            { "deviceKey": "countdown-timer"          , "joinStart": 1  },
+            { "deviceKey": "countup-timer"          , "joinStart": 11  }
           ]
         }
       }
