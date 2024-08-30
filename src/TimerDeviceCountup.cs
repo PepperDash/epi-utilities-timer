@@ -68,9 +68,8 @@ namespace TimerDevice
             CountupTimerRunningFb.FireUpdate();
 
             Debug.Console(1, this, "CountupTimer.Start() requested...");
-
-            if(_countupTimerTimeSpan == null)
-                _countupTimerTimeSpan = new TimeSpan();
+          
+            _countupTimerTimeSpan = new TimeSpan();
 
             if (_countupCTimer == null)
             {
