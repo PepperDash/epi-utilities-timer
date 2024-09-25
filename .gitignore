@@ -14,6 +14,10 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Crestron SiMPL Compiled Files
+/src/unit-test/*SPls*/
+/src/unit-test/SPlsWork/
+
 # Mono auto generated files
 mono_crash.*
 
