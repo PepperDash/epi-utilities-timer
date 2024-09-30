@@ -71,15 +71,15 @@
 
 | Join Number | Join Span | Description                                                           | Type    | Capabilities |
 | ----------- | --------- | --------------------------------------------------------------------- | ------- | ------------ |
-|  11         | 1         | Timer countup start                                                   | Digital | FromSIMPL    |
-|  11         | 1         | Timer countup active feedback                                         | Digital | ToSIMPL      |
-|  12         | 1         | Timer countup stop                                                    | Digital | FromSIMPL    |
+|  1          | 1         | Timer countup start                                                   | Digital | FromSIMPL    |
+|  1          | 1         | Timer countup active feedback                                         | Digital | ToSIMPL      |
+|  2          | 1         | Timer countup stop                                                    | Digital | FromSIMPL    |
 
 ## Serials
 
 | Join Number | Join Span | Description                         | Type   | Capabilities |
 | ----------- | --------- | ----------------------------------- | ------ | ------------ |
-|  11         | 1         | Timer countup elapsed time text     | Serial | ToSIMPL      |
+|  1          | 1         | Timer countup elapsed time text     | Serial | ToSIMPL      |
 
 
 
