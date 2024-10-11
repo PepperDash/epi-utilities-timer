@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace CountdownTimerEpi
+namespace TimerDevice
 {
-	public class TimerPropertiesConfig
+	/// <summary>
+	/// Configuration objects specific to device
+	/// </summary>
+    public class CountdownTimerPropertiesConfig
 	{
 		[JsonProperty("countdownTime")]
 		public int CountdownTime { get; set; }
@@ -13,4 +16,13 @@ namespace CountdownTimerEpi
 		[JsonProperty("extendTime")]
 		public int? ExtendTime { get; set; }
 	}
+
+    /// <summary>
+    /// Configuration objects specific to device
+    /// </summary>
+    public class CountupTimerPropertiesConfig
+    {
+        [JsonProperty("autoStopOnStartRelease")]
+        public bool autoStopOnStartRelease { get; set; }
+    }
 }

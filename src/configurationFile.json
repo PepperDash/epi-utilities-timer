@@ -1,0 +1,69 @@
+{
+  "system": {
+    "info": {}
+  },
+  "template": {
+    "devices": [
+      {
+        "type": "rmc4",
+        "name": "processor",
+        "group": "processor",
+        "supportedConfigModes": ["compliance", "essentials"],
+        "supportedSystemTypes": ["hudType", "presType", "vtcType", "custom"],
+        "supportsCompliance": true,
+        "properties": {
+          "numberOfComPorts": 6,
+          "numberOfIrPorts": 8,
+          "numberOfRelays": 8,
+          "numberOfDIOPorts": 8
+        },
+        "key": "processor",
+        "uid": 0
+      },
+      {
+        "key": "countdown-timer",
+        "uid": 26,
+        "type": "countdowntimer",
+        "group": "timers",
+        "properties": { 
+          "CountdownTime": 15,
+          "WarningTime": 5,
+          "ExtendTime": 5
+        }
+      },
+      {
+        "key": "countup-timer",
+        "uid": 26,
+        "type": "countuptimer",
+        "group": "timers",
+        "properties": { 
+          "autoStopOnStartRelease": true
+        }
+      },
+      {
+        "key": "timers-bridge",
+        "uid": 26,
+        "group": "api",
+        "type": "eiscApiAdvanced",
+        "properties": {
+          "control": {
+            "tcpSshProperties": {
+              "address": "127.0.0.2",
+              "port": 0
+            },
+            "ipid": "aa",
+            "method": "ipidTcp"
+          },
+          "devices": [
+            
+            { "deviceKey": "countdown-timer"          , "joinStart": 1  },
+            { "deviceKey": "countup-timer"          , "joinStart": 11  }
+          ]
+        }
+      }
+    ],
+    "info": {},
+    "rooms": [],
+    "tieLines": []
+  }
+}

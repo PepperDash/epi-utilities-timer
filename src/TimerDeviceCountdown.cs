@@ -5,17 +5,17 @@ using PepperDash.Core;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Bridges;
 
-namespace CountdownTimerEpi
+namespace TimerDevice
 {
-	public class TimerDevice : EssentialsBridgeableDevice
+	public class CountdownTimer : EssentialsBridgeableDevice
 	{
 		private readonly SecondsCountdownTimer _countdownTimer;
 		private int _secondsToCount;
 		private readonly int? _warningTime;
-		private readonly int? _extendTime;
+		private readonly int? _extendTime;        
 
 		/// <summary>
-		/// Timer object
+		/// Timer objects
 		/// </summary>
 		public SecondsCountdownTimer Timer { get { return _countdownTimer; } }
 
@@ -30,13 +30,13 @@ namespace CountdownTimerEpi
 				_secondsToCount = value;
 				_countdownTimer.SecondsToCount = value;
 			}
-		}
+		}		
 
 		public BoolFeedback TimerRunningFb { get { return _countdownTimer.IsRunningFeedback; } }
 		public BoolFeedbackPulse TimerExpiredFb { get; private set; }
 		public BoolFeedbackPulse TimerWarningFb { get; private set; }
 		public IntFeedback TimerPercentageFb { get { return _countdownTimer.PercentFeedback; } }
-		public StringFeedback TimerValueFb { get { return _countdownTimer.TimeRemainingFeedback; } }
+		public StringFeedback TimerValueFb { get { return _countdownTimer.TimeRemainingFeedback; } }		
 
 		/// <summary>
 		/// Constructor
@@ -44,7 +44,7 @@ namespace CountdownTimerEpi
 		/// <param name="key"></param>
 		/// <param name="name"></param>
 		/// <param name="propertiesConfig"></param>
-		public TimerDevice(string key, string name, TimerPropertiesConfig propertiesConfig)
+        public CountdownTimer(string key, string name, CountdownTimerPropertiesConfig propertiesConfig)
 			: base(key, name)
 		{
 			if (propertiesConfig == null) return;
@@ -136,7 +136,7 @@ namespace CountdownTimerEpi
 		/// <param name="bridge"></param>
 		public override void LinkToApi(BasicTriList trilist, uint joinStart, string joinMapKey, EiscApiAdvanced bridge)
 		{
-			var joinMap = new TimerJoinMap(joinStart);
+			var joinMap = new CountdownTimerJoinMap(joinStart);
 
 			// this adds the join map to the colleciton of the bridge
 			if (bridge != null)
@@ -153,7 +153,7 @@ namespace CountdownTimerEpi
 			Debug.Console(0, this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
 			Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
 
-			TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCountingg.JoinNumber]);
+			TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
 			TimerExpiredFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerExpired.JoinNumber]);
 			TimerWarningFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerWarning.JoinNumber]);
 
