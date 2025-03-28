@@ -14,7 +14,7 @@ namespace Timer.Factories
 		/// </summary>
 		public CountdownTimerFactory()
 		{
-			MinimumEssentialsFrameworkVersion = "1.16.0";
+			MinimumEssentialsFrameworkVersion = "2.0.0";
             TypeNames = new List<string> { "countdownTimer" };
 		}
 
@@ -43,7 +43,7 @@ namespace Timer.Factories
 		/// </summary>
 		public CountupTimerFactory()
 		{
-			MinimumEssentialsFrameworkVersion = "1.16.0";
+			MinimumEssentialsFrameworkVersion = "2.0.0";
             TypeNames = new List<string> { "countupTimer" };
 		}
 
