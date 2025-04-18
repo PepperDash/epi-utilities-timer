@@ -9,7 +9,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.projectinfo
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -22,16 +21,16 @@
 mono_crash.*
 
 # Build results
-[Bb]in/
 [Dd]ebug/
 [Dd]ebugPublic/
+[Rr]elease/
 [Rr]eleases/
-[Dd]ebug/
 x64/
 x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
+[Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
@@ -356,3 +355,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Crestron Zip Files
+*.cplz
+*.clz
+*.projectinfo
+*.suo
