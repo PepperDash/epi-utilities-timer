@@ -45,8 +45,8 @@ namespace TimerDevice
         /// </summary>
         /// <param name="e"></param>
         protected virtual void OnCountupTimerChange(CountupTimerEventArgs e)
-        {
-            CountupTimerChanged += (sender, args) => { };
+        {           
+            CountupTimerChanged?.Invoke(this, e);
         }
 
         /// <summary>
