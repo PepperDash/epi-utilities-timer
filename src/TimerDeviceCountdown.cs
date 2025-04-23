@@ -96,7 +96,7 @@ namespace TimerDevice
 			_countdownTimer.WasCancelled += (sender, args) =>
 			{
 				var timer = sender as SecondsCountdownTimer;				
-				Debug.LogDebug(this, "Countdown camcelled");
+				Debug.LogDebug(this, "Countdown cancelled");
 
                 _countdownTimer.SecondsToCount = SecondsToCount;
 			};
