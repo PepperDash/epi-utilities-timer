@@ -4,7 +4,7 @@
 
 > This plugin is a Simpl Windows wrapper of the existing Essentials Countdown timer.
 
-## Config Example
+# Countdown Timer Config Example
 
 ```json
 {
@@ -49,7 +49,7 @@
 | ----------- | --------- | ----------------------------------- | ------ | ------------ |
 |   1         | 1         | Timer countdown remaining time text | Serial | ToSIMPL      |
 
-## Config Example
+# Countup Timer Config Example
 
 ```json
 {
