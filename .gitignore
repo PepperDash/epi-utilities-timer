@@ -14,8 +14,8 @@
 *.userprefs
 
 # Crestron SiMPL Compiled Files
-/src/unit-test/*SPls*/
-/src/unit-test/SPlsWork/
+/src/simpl-example/*SPls*/
+/src/simpl-example/SPlsWork/
 
 # Mono auto generated files
 mono_crash.*
