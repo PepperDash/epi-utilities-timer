@@ -8,7 +8,7 @@
 		<Deterministic>false</Deterministic>
 		<AssemblyTitle>PepperDash.Essentials.Plugin.Utilities.Timer</AssemblyTitle>
 		<Company>PepperDash Technologies</Company>
-		<Description>This software is a template for a PepperDash Essentials Plugin.</Description>
+		<Description>PepperDash Essentials Plugin Countdown or Countup timer.</Description>
 		<Copyright>Copyright 2025</Copyright>
 		<Version>1.0.0-local</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
