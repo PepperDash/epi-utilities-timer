@@ -175,8 +175,8 @@ namespace TimerDevice
                 joinMap.SetCustomJoinData(customJoins);
             }
             
-            Debug.LogVerbose(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));            
-            Debug.LogVerbose(this, "Linking to Bridge Type {0}", GetType().Name);
+            Debug.LogInformation(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));            
+            Debug.LogInformation(this, "Linking to Bridge Type {0}", GetType().Name);
 
             CountupTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountupTimerCounting.JoinNumber]);
             CountupTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountupTimerValue.JoinNumber]);

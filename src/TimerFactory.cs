@@ -31,7 +31,7 @@ namespace Timer.Factories
             var propertiesConfig = dc.Properties.ToObject<CountdownTimerPropertiesConfig>();
             if (propertiesConfig != null) return new CountdownTimer(dc.Key, dc.Name, propertiesConfig);
 						
-			Debug.LogVerbose("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
+			Debug.LogInformation("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
             return null;
 		}
 	}
@@ -60,7 +60,7 @@ namespace Timer.Factories
             var propertiesConfig = dc.Properties.ToObject<CountupTimerPropertiesConfig>();
             if (propertiesConfig != null) return new CountupTimer(dc.Key, dc.Name, propertiesConfig);
 					
-			Debug.LogVerbose("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
+			Debug.LogInformation("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
             return null;
 		}
 	}

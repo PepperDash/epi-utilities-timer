@@ -75,7 +75,7 @@ namespace TimerDevice
 		/// <returns></returns>
 		public override bool CustomActivate()
 		{			
-			Debug.LogInformation(this, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
+			Debug.LogVerbose(this, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
 
             _countdownTimer.HasStarted += (sender, args) =>
 			{
@@ -152,8 +152,8 @@ namespace TimerDevice
 				joinMap.SetCustomJoinData(customJoins);
 			}
 			
-            Debug.LogVerbose(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));           
-            Debug.LogVerbose(this, "Linking to Bridge Type {0}", GetType().Name);
+            Debug.LogInformation(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));           
+            Debug.LogInformation(this, "Linking to Bridge Type {0}", GetType().Name);
 
 
             TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
@@ -186,7 +186,7 @@ namespace TimerDevice
 			if (_extendTime != null)
 				timeToExtend = (int)_extendTime;
 		
-            Debug.LogVerbose(this, "Countdown extended {0}", timeToExtend);
+            Debug.LogDebug(this, "Countdown extended {0}", timeToExtend);
 
             _countdownTimer.SecondsToCount = timeToExtend;
 			_countdownTimer.Reset();
