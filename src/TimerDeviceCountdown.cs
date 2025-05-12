@@ -74,30 +74,31 @@ namespace TimerDevice
 		/// </summary>
 		/// <returns></returns>
 		public override bool CustomActivate()
-		{
-			Debug.Console(2, _countdownTimer, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
+		{			
+			Debug.LogVerbose(this, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
 
-			_countdownTimer.HasStarted += (sender, args) =>
+            _countdownTimer.HasStarted += (sender, args) =>
 			{
 				var timer = sender as SecondsCountdownTimer;
 				if (timer != null)
-					Debug.Console(1, timer, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
+					Debug.LogDebug(this, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
 			};
 
 			_countdownTimer.HasFinished += (sender, args) =>
 			{
 				var timer = sender as SecondsCountdownTimer;
 				TimerExpiredFb.Start();
-
-				Debug.Console(1, timer, "Countdown has completed");
+				
+				Debug.LogDebug(this, "Countdown has completed");
 				_countdownTimer.SecondsToCount = SecondsToCount;
 			};
 
 			_countdownTimer.WasCancelled += (sender, args) =>
 			{
-				var timer = sender as SecondsCountdownTimer;
-				Debug.Console(1, timer, "Countdown cancelled");
-				_countdownTimer.SecondsToCount = SecondsToCount;
+				var timer = sender as SecondsCountdownTimer;				
+				Debug.LogDebug(this, "Countdown cancelled");
+
+                _countdownTimer.SecondsToCount = SecondsToCount;
 			};
 
 			_countdownTimer.TimeRemainingFeedback.OutputChange += (sender, args) =>
@@ -106,10 +107,11 @@ namespace TimerDevice
 					return;
 
 				var timeRemainingString = _countdownTimer.FinishTime.Subtract(DateTime.Now).ToString();
-				var timeRemaining = _countdownTimer.FinishTime.Subtract(DateTime.Now).TotalSeconds;
-				Debug.Console(1, this, "Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
+				var timeRemaining = _countdownTimer.FinishTime.Subtract(DateTime.Now).TotalSeconds;				
+                Debug.LogDebug(this, "Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
 
-				if (timeRemaining == (int)_warningTime)
+
+                if (timeRemaining == (int)_warningTime)
 					TimerWarningFb.Start();
 			};
 
@@ -149,11 +151,12 @@ namespace TimerDevice
 			{
 				joinMap.SetCustomJoinData(customJoins);
 			}
+			
+            Debug.LogInformation(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));           
+            Debug.LogInformation(this, "Linking to Bridge Type {0}", GetType().Name);
 
-			Debug.Console(0, this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));
-			Debug.Console(0, this, "Linking to Bridge Type {0}", GetType().Name);
 
-			TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
+            TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
 			TimerExpiredFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerExpired.JoinNumber]);
 			TimerWarningFb.Feedback.LinkInputSig(trilist.BooleanInput[joinMap.TimerWarning.JoinNumber]);
 
@@ -182,9 +185,10 @@ namespace TimerDevice
 			var timeToExtend = _secondsToCount;
 			if (_extendTime != null)
 				timeToExtend = (int)_extendTime;
+		
+            Debug.LogDebug(this, "Countdown extended {0}", timeToExtend);
 
-			Debug.Console(1, _countdownTimer, "Countdown extended {0}", timeToExtend);
-			_countdownTimer.SecondsToCount = timeToExtend;
+            _countdownTimer.SecondsToCount = timeToExtend;
 			_countdownTimer.Reset();
 		}
 	}
