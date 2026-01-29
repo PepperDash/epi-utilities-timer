@@ -87,3 +87,69 @@
 
 
 
+<!-- START Minimum Essentials Framework Versions -->
+### Minimum Essentials Framework Versions
+
+- 2.4.4
+<!-- END Minimum Essentials Framework Versions -->
+<!-- START Config Example -->
+### Config Example
+
+```json
+{
+    "key": "GeneratedKey",
+    "uid": 1,
+    "name": "GeneratedName",
+    "type": "CountdownTimerProperties",
+    "group": "Group",
+    "properties": {
+        "countdownTime": 0,
+        "warningTime": 0,
+        "extendTime": 0
+    }
+}
+```
+<!-- END Config Example -->
+<!-- START Supported Types -->
+
+<!-- END Supported Types -->
+<!-- START Join Maps -->
+
+<!-- END Join Maps -->
+<!-- START Interfaces Implemented -->
+
+<!-- END Interfaces Implemented -->
+<!-- START Base Classes -->
+### Base Classes
+
+- JoinMapBaseAdvanced
+- TimerBaseDeviceFactory<CountdownTimer>
+- EssentialsBridgeableDevice
+<!-- END Base Classes -->
+<!-- START Public Methods -->
+### Public Methods
+
+- public void Extend()
+- public void TriggerCountupTimerChange(string message)
+- public void Start()
+- public void Stop()
+- public void Reset()
+- public void CallTimerIncrement(object notUsed)
+<!-- END Public Methods -->
+<!-- START Bool Feedbacks -->
+### Bool Feedbacks
+
+- TimerRunningFb
+- CountupTimerRunningFb
+<!-- END Bool Feedbacks -->
+<!-- START Int Feedbacks -->
+### Int Feedbacks
+
+- TimerPercentageFb
+<!-- END Int Feedbacks -->
+<!-- START String Feedbacks -->
+### String Feedbacks
+
+- TimerValueFb
+- CountupTimerValueFb
+<!-- END String Feedbacks -->
