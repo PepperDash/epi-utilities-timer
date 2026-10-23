@@ -3,8 +3,8 @@
 		<ProjectType>ProgramLibrary</ProjectType>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFramework>net472</TargetFramework>
-		<RootNamespace>CountdownTimerEpi</RootNamespace>
+		<TargetFramework>net8</TargetFramework>
+		<RootNamespace>PepperDash.Essentials.Plugins</RootNamespace>
 		<Deterministic>false</Deterministic>
 		<AssemblyTitle>PepperDash.Essentials.Plugin.Utilities.Timer</AssemblyTitle>
 		<Company>PepperDash Technologies</Company>
@@ -17,11 +17,7 @@
 		<Authors>PepperDash Technologies</Authors>
 		<PackageId>Pepperdash.Essentials.Plugin.UtilitiesTimer</PackageId>
 		<PackageProjectUrl>https://github.com/PepperDash/epi-utilities-timer.git</PackageProjectUrl>
-		<PackageTags>crestron 4series essentials plugin utilities timer</PackageTags>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants);SERIES4</DefineConstants>
+		<PackageTags>crestron 4series essentials plugin utilities timer net8</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -43,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PepperDashEssentials" Version="2.4.4">
+    <PackageReference Include="PepperDashEssentials" Version="3.0.0-rc.19">
     <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>

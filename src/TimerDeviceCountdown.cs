@@ -2,10 +2,11 @@
 using Crestron.SimplSharp;
 using Crestron.SimplSharpPro.DeviceSupport;
 using PepperDash.Core;
+using PepperDash.Core.Logging;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Bridges;
 
-namespace TimerDevice
+namespace PepperDash.Essentials.Plugins
 {
 	public class CountdownTimer : EssentialsBridgeableDevice
 	{
@@ -73,15 +74,15 @@ namespace TimerDevice
 		/// device custom activate
 		/// </summary>
 		/// <returns></returns>
-		public override bool CustomActivate()
+		protected override bool CustomActivate()
 		{			
-			Debug.LogVerbose(this, "Activated a new timer with a {0} second countdown", _countdownTimer.SecondsToCount);
+			this.LogVerbose("Activated a new timer with a {SecondsToCount} second countdown", _countdownTimer.SecondsToCount);
 
             _countdownTimer.HasStarted += (sender, args) =>
 			{
 				var timer = sender as SecondsCountdownTimer;
 				if (timer != null)
-					Debug.LogDebug(this, "Countdown started and will expire at {0}", timer.FinishTime.ToShortTimeString());
+					this.LogDebug("Countdown started and will expire at {FinishTime}", timer.FinishTime.ToShortTimeString());
 			};
 
 			_countdownTimer.HasFinished += (sender, args) =>
@@ -89,14 +90,14 @@ namespace TimerDevice
 				var timer = sender as SecondsCountdownTimer;
 				TimerExpiredFb.Start();
 				
-				Debug.LogDebug(this, "Countdown has completed");
+				this.LogDebug("Countdown has completed");
 				_countdownTimer.SecondsToCount = SecondsToCount;
 			};
 
 			_countdownTimer.WasCancelled += (sender, args) =>
 			{
 				var timer = sender as SecondsCountdownTimer;				
-				Debug.LogDebug(this, "Countdown cancelled");
+				this.LogDebug("Countdown cancelled");
 
                 _countdownTimer.SecondsToCount = SecondsToCount;
 			};
@@ -108,7 +109,7 @@ namespace TimerDevice
 
 				var timeRemainingString = _countdownTimer.FinishTime.Subtract(DateTime.Now).ToString();
 				var timeRemaining = _countdownTimer.FinishTime.Subtract(DateTime.Now).TotalSeconds;				
-                Debug.LogDebug(this, "Time remaining for warning:{0}|{1}", timeRemainingString, timeRemaining);
+                this.LogDebug("Time remaining for warning:{TimeRemaining}|{SecondsRemaining}", timeRemainingString, timeRemaining);
 
 
                 if (timeRemaining == (int)_warningTime)
@@ -152,8 +153,8 @@ namespace TimerDevice
 				joinMap.SetCustomJoinData(customJoins);
 			}
 			
-            Debug.LogInformation(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));           
-            Debug.LogInformation(this, "Linking to Bridge Type {0}", GetType().Name);
+            this.LogInformation("Linking to Trilist '{TrilistId}'", trilist.ID.ToString("X"));           
+            this.LogInformation("Linking to Bridge Type {BridgeType}", GetType().Name);
 
 
             TimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.TimerCounting.JoinNumber]);
@@ -186,7 +187,7 @@ namespace TimerDevice
 			if (_extendTime != null)
 				timeToExtend = (int)_extendTime;
 		
-            Debug.LogDebug(this, "Countdown extended {0}", timeToExtend);
+            this.LogDebug("Countdown extended {ExtendSeconds}", timeToExtend);
 
             _countdownTimer.SecondsToCount = timeToExtend;
 			_countdownTimer.Reset();

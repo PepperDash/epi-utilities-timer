@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TimerDevice;
 using PepperDash.Core;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Config;
 
-namespace Timer.Factories
+namespace PepperDash.Essentials.Plugins
 {
 	public class CountdownTimerFactory : TimerBaseDeviceFactory<CountdownTimer>
 	{
@@ -14,7 +13,7 @@ namespace Timer.Factories
 		/// </summary>
 		public CountdownTimerFactory()
 		{
-			MinimumEssentialsFrameworkVersion = "2.4.4";
+			MinimumEssentialsFrameworkVersion = "3.0.0";
             TypeNames = new List<string> { "countdownTimer" };
 		}
 
@@ -25,13 +24,13 @@ namespace Timer.Factories
 		/// <returns></returns>
 		public override EssentialsDevice BuildDevice(DeviceConfig dc)
 		{			
-			Debug.LogDebug("[{0}] Factory Attempting to create new device from type: {1}", dc.Key, dc.Type);
+			Debug.LogDebug("[{Key}] Factory Attempting to create new device from type: {Type}", dc.Key, dc.Type);
 
             // get the plugin device properties configuration object & check for null 
             var propertiesConfig = dc.Properties.ToObject<CountdownTimerPropertiesConfig>();
             if (propertiesConfig != null) return new CountdownTimer(dc.Key, dc.Name, propertiesConfig);
 						
-			Debug.LogInformation("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
+			Debug.LogInformation("[{Key}] Factory: failed to read properties config for {Name}", dc.Key, dc.Name);
             return null;
 		}
 	}
@@ -43,7 +42,7 @@ namespace Timer.Factories
 		/// </summary>
 		public CountupTimerFactory()
 		{
-			MinimumEssentialsFrameworkVersion = "2.4.4";
+			MinimumEssentialsFrameworkVersion = "3.0.0";
             TypeNames = new List<string> { "countupTimer" };
 		}
 
@@ -54,13 +53,13 @@ namespace Timer.Factories
 		/// <returns></returns>
 		public override EssentialsDevice BuildDevice(DeviceConfig dc)
 		{			
-			Debug.LogDebug("[{0}] Factory Attempting to create new device from type: {1}", dc.Key, dc.Type);
+			Debug.LogDebug("[{Key}] Factory Attempting to create new device from type: {Type}", dc.Key, dc.Type);
 
             // get the plugin device properties configuration object & check for null 
             var propertiesConfig = dc.Properties.ToObject<CountupTimerPropertiesConfig>();
             if (propertiesConfig != null) return new CountupTimer(dc.Key, dc.Name, propertiesConfig);
 					
-			Debug.LogInformation("[{0}] Factory: failed to read properties config for {1}", dc.Key, dc.Name);
+			Debug.LogInformation("[{Key}] Factory: failed to read properties config for {Name}", dc.Key, dc.Name);
             return null;
 		}
 	}

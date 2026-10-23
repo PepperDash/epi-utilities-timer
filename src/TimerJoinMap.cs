@@ -1,6 +1,6 @@
 ﻿using PepperDash.Essentials.Core;
 
-namespace TimerDevice
+namespace PepperDash.Essentials.Plugins
 {
 	/// <summary>
 	/// Plugin device bridge join map

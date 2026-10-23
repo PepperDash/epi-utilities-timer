@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace TimerDevice
+namespace PepperDash.Essentials.Plugins
 {
 	/// <summary>
 	/// Configuration objects specific to device

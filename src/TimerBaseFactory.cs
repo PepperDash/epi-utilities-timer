@@ -1,13 +1,12 @@
 using System;
 using System.Linq;
-using TimerDevice;
 using PepperDash.Essentials.Core;
 
-namespace Timer.Factories
+namespace PepperDash.Essentials.Plugins
 {
 
     public abstract class TimerBaseDeviceFactory<T> : EssentialsPluginDeviceFactory<T> where T : EssentialsDevice
     {
-        public const string MinumumEssentialsVersion = "2.4.4";
+        public const string MinumumEssentialsVersion = "3.0.0";
     }
 }

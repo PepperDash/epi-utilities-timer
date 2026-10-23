@@ -2,10 +2,11 @@
 using Crestron.SimplSharp;
 using Crestron.SimplSharpPro.DeviceSupport;
 using PepperDash.Core;
+using PepperDash.Core.Logging;
 using PepperDash.Essentials.Core;
 using PepperDash.Essentials.Core.Bridges;
 
-namespace TimerDevice
+namespace PepperDash.Essentials.Plugins
 {
     public class CountupTimer : EssentialsBridgeableDevice
     {
@@ -67,19 +68,19 @@ namespace TimerDevice
             IsRunning = true;
             CountupTimerRunningFb.FireUpdate();
             
-            Debug.LogDebug(this, "CountupTimer.Start() requested...");
+            this.LogDebug("CountupTimer.Start() requested...");
 
 
             _countupTimerTimeSpan = new TimeSpan();
 
             if (_countupCTimer == null)
             {                
-                Debug.LogDebug(this, "Creating CountupTimer");
+                this.LogDebug("Creating CountupTimer");
                 _countupCTimer = new CTimer(CallTimerIncrement, null, 1000, 1000);
             }
             else
             {                
-                Debug.LogDebug(this, "Resetting CountupTimer");
+                this.LogDebug("Resetting CountupTimer");
                 _countupCTimer.Reset(1000, 1000);
             }
         }
@@ -89,7 +90,7 @@ namespace TimerDevice
         /// </summary>
         public void Stop()
         {            
-            Debug.LogDebug(this, "CountupTimer.Stop() requested...");
+            this.LogDebug("CountupTimer.Stop() requested...");
 
             if (_countupCTimer != null)
             {
@@ -101,7 +102,7 @@ namespace TimerDevice
             }
             else
             {                 
-                Debug.LogDebug(this, "Stop() called while _countupCTimer null.");
+                this.LogDebug("Stop() called while _countupCTimer null.");
             }
         }
 
@@ -175,8 +176,8 @@ namespace TimerDevice
                 joinMap.SetCustomJoinData(customJoins);
             }
             
-            Debug.LogInformation(this, "Linking to Trilist '{0}'", trilist.ID.ToString("X"));            
-            Debug.LogInformation(this, "Linking to Bridge Type {0}", GetType().Name);
+            this.LogInformation("Linking to Trilist '{TrilistId}'", trilist.ID.ToString("X"));            
+            this.LogInformation("Linking to Bridge Type {BridgeType}", GetType().Name);
 
             CountupTimerRunningFb.LinkInputSig(trilist.BooleanInput[joinMap.CountupTimerCounting.JoinNumber]);
             CountupTimerValueFb.LinkInputSig(trilist.StringInput[joinMap.CountupTimerValue.JoinNumber]);
