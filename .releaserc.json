@@ -27,9 +27,9 @@
       "main",
       {"name": "release", "prerelease": "rc", "channel": "rc"},
       {
-        "name": "replace-me-feature-branch",
-        "prerelease": "replace-me-prerelease",
-        "channel": "replace-me-prerelease"
+        "name": "feat/v3-migration",
+        "prerelease": "beta",
+        "channel": "beta"
       }
     ]
   }
